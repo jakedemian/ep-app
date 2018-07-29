@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700');
+
+html, body {
+    margin: 0;
+    padding: 0;
+
+    height: 100%;
+}
+
+body {
+    background-color: #ebebeb;
+    font-family: 'Montserrat';
+    color: #acacac;
+    background-image: url('../img/bg.png');
+}
+
+.container {
+    display: grid;
+    grid-template-rows: 34px auto auto auto;
+}
+
+.header {
+    display: grid;
+    grid-template-columns: 85% auto;
+    background: #333638;
+    z-index: 2;
+}
+
+.logo {
+    -webkit-app-region: drag;
+    padding: 8px;
+}
+
+nav {
+    justify-self: right;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    float: left;
+    margin-right: 8px;
+    margin-top: 8px;
+}
+
+nav img {
+    width: 12px;
+    cursor: pointer;
+}
+
+nav img#min {
+    padding: 10px;
+}
+
+.input {
+    background-color: #acacac;
+}
+
+input {
+    background-color: #acacac;
+    border: 0;
+    padding: 12px;
+    color: #524e4e;
+    font-family: 'Montserrat';
+    font-size: 12.6px;
+    outline: none;
+}
+
+button {
+    border: none;
+    padding: 12px;
+    color: #524e4e;
+    font-family: 'Montserrat';
+    font-size: 12.6px;
+    outline: none;
+    float: right;
+}
+
+button:hover {
+    background: #333638;
+    color: #acacac;
+    cursor: pointer;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 65% auto;
+    padding: 20px;
+}
+
+main figure {
+    margin: 0;
+}
+
+figure img {
+    border-radius: 50%;
+    float: left;
+    width: 88px;
+    margin-right: 20px;
+    border: 2px solid #ffffff;
+}
+
+figcaption {
+    margin-top: 25px;
+    cursor: default;
+}
+
+figcaption strong {
+    font-weight: bold;
+    color: #acacac;
+    font-size: 24px;
+    display: block;
+    margin-bottom: 0;
+}
+
+figcaption span {
+    font-size: 16px;
+    margin-top: 0px;
+    font-weight: normal;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(2,auto);
+    justify-self: right;
+    margin-top: 25px;
+}
+
+.mplus {
+    float: left;
+    cursor: pointer;
+}
+
+.mplus strong {
+    border-bottom: 4px solid #acacac;
+    font-size: 22px;
+    color: #8738e8;
+}
+
+.mplus span {
+    font-size: 12px;
+    margin-top: 10px;
+    text-transform: uppercase;
+}
+
+.raidprog {
+    float: left;
+    margin-left: 20px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.raidprog strong {
+    border-bottom: 4px solid #acacac;
+    font-size: 22px;
+    color: #e83897;
+}
+
+.raidprog span {
+    font-size: 12px;
+    margin-top: 10px;
+    text-transform: uppercase;
+}
+
+footer {
+    background: #333638;
+    padding: 5px;
+    border-top: 1px solid #1f1f1f;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 13px;
+}
+
+footer a {
+    text-decoration: none;
+    color: #e88338;
+}
+
+
+

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Elitist Prick Btw!</title>
+        <link rel="stylesheet" href="../assets/css/main.css">
+        <link rel="stylesheet" href="../assets/css/animate.css">
+        <link rel="stylesheet" href="../assets/css/hover.css">
+        
+    </head>
+    <body>
+
+    <div class="container">
+        <div class="header">
+            <div class="animated fadeIn logo"><img src="../assets/img/logo.png"></div>
+            <nav>
+            <ul>
+                <li><img src="../assets/img/min.svg" id="min" (click)="minimizeWindow()"></li>
+                <li><img src="../assets/img/close.svg" (click)="closeWindow()"></li>
+            </ul>
+            </nav>
+        </div>
+
+        <div  class="animated fadeInDown slow input">
+            <input type="text"  id="characterName" name="characterName" placeholder="Character Name">
+
+            <input type="text" id="characterRealm" name="characterRealm" placeholder="Realm">
+
+            <button type="button" id="lookupCharacter"  onclick="lookupCharacter()">Search</button>
+        </div>
+
+        <main>
+            <figure>
+                <img class="hvr-grow" src="../assets/img/icon.png">
+                <figcaption class="animated fadeIn slow">
+                    <strong>Kunab</strong>
+                    <span>Area-52</span>
+                </figcaption>
+            </figure>
+
+            <div class="animated fadeIn slower stats">
+                <div class="hvr-float-shadow mplus">
+                    <strong>3,400</strong>
+                    <span>M+ Score</span>
+                </div>
+
+                <div class="hvr-float-shadow raidprog">
+                    <strong>11/11H</strong>
+                    <span>ANTBT</span>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <a href="#">WARCRAFTLOGS</a>
+        </footer>
+    
+    </div>  
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+    function lookupCharacter() {
+        var charName = $("#characterName").val();
+        var charRealm = $("#characterRealm").val();
+        $.ajax({
+            url: 'https://raider.io/api/v1/character/profile',
+            type: 'GET',
+            data: { name: charName, region : "us", realm: charRealm, fields: "mythic_plus_scores"},
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){
+                processResponseData(data);
+            }
+        });
+    }
+
+    </script>
+    
+    
+        
+    </body>
+</html>
