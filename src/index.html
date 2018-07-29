@@ -6,7 +6,6 @@
         <link rel="stylesheet" href="../assets/css/main.css">
         <link rel="stylesheet" href="../assets/css/animate.css">
         <link rel="stylesheet" href="../assets/css/hover.css">
-        
     </head>
     <body>
 
@@ -22,30 +21,30 @@
         </div>
 
         <div  class="animated fadeInDown slow input">
-            <input type="text"  id="characterName" name="characterName" placeholder="Character Name">
+            <input type="text"  id="characterNameInput" name="characterName" placeholder="Character Name">
 
-            <input type="text" id="characterRealm" name="characterRealm" placeholder="Realm">
+            <input type="text" id="characterRealmInput" name="characterRealm" placeholder="Realm">
 
             <button type="button" id="lookupCharacter"  onclick="lookupCharacter()">Search</button>
         </div>
 
         <main>
             <figure>
-                <img class="hvr-grow" src="../assets/img/icon.png">
+                <img id="classicon" class="hvr-grow" src="../assets/img/icon.png">
                 <figcaption class="animated fadeIn slow">
-                    <strong>Kunab</strong>
-                    <span>Area-52</span>
+                    <strong id="charName"></strong>
+                    <span id="charRealm"></span>
                 </figcaption>
             </figure>
 
             <div class="animated fadeIn slower stats">
                 <div class="hvr-float-shadow mplus">
-                    <strong>3,400</strong>
+                    <div id="mPlusScore"></div>
                     <span>M+ Score</span>
                 </div>
 
                 <div class="hvr-float-shadow raidprog">
-                    <strong>11/11H</strong>
+                    <div id="raidProgg"></div>
                     <span>ANTBT</span>
                 </div>
             </div>
@@ -58,21 +57,78 @@
     </div>  
 
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
     <script>
+	/**
+	* Ugly, but this is the easiest way to import jQuery in electron.  TODO FIXME find a better way to get jquery loaded.
+	*/
+	window.onload = function() {
+		// Load the script
+		var script = document.createElement("SCRIPT");
+		script.src = 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js';
+		script.type = 'text/javascript';
+		script.onload = function() {
+			var $ = window.jQuery;
+			// Use $ here...
+		};
+		document.getElementsByTagName("head")[0].appendChild(script);
+	}
+	
+	/**
+	* Create and kick off the api request.
+	*/
     function lookupCharacter() {
-        var charName = $("#characterName").val();
-        var charRealm = $("#characterRealm").val();
-        $.ajax({
-            url: 'https://raider.io/api/v1/character/profile',
-            type: 'GET',
-            data: { name: charName, region : "us", realm: charRealm, fields: "mythic_plus_scores"},
-            contentType: 'application/json; charset=utf-8',
-            success: function(data){
-                processResponseData(data);
-            }
-        });
+		// pull the data that the user entered in
+        var charName = $("#characterNameInput").val();
+        var charRealm = $("#characterRealmInput").val();
+		
+		// if either field is blank and/or only whitespace, don't look anything up
+		if(charName.trim() == "" || charRealm.trim() == ""){
+			return;
+		}
+		
+		// create character lookup request
+		const request = async() => {
+			var response = await fetch('https://raider.io/api/v1/characters/profile?region=us&realm=' + charRealm + '&name=' + charName + '&fields=mythic_plus_scores%2Craid_progression');
+			const json = await response.json();
+			window.processResponseData(json);
+		}
+		
+		// make the request!
+		request();
     }
+	
+	/**
+	* Process any response received by the api request
+	*/
+	function processResponseData(data){
+		// if there's an error finding the character, we want to kick this to our error handling function
+		if(!!data.error){
+			processLookupError(data);
+			return;
+		}
+		
+		// otherwise, we populate everything with what the api gave us back
+		$("#charName").html(data.name);
+		$("#charRealm").html(data.realm);
+        $("#mPlusScore").html(data.mythic_plus_scores.all.toFixed(0));
+        $("#raidProgg").html(data.raid_progression["antorus-the-burning-throne"].summary.replace(" ",""));
+
+
+        var classImgSrc = "../assets/img/" + data.class.replace(" ","_").toLowerCase() + ".png";
+        $("#classicon").attr('src', classImgSrc);
+	}
+	
+	/**
+	* Process the response if we determined it was an error response.
+	*/
+	function processLookupError(errorData){
+	    // for now just print to console, but you should make a popup dialog or a 
+		// hidden error message that briefly displays instead of just logging to console.
+		// this will mostly be when you look up a character that couldn't be found (wrong name or wrong realm)
+		console.error(errorData.statusCode + " " + errorData.error + ": " + errorData.message);
+		console.warn("TODO: make this display some message to the user besides just logging to console! They will need to see this error info.");
+	}
 
     </script>
     

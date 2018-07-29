@@ -131,14 +131,18 @@ figcaption span {
 }
 
 .mplus {
+    display: grid;
+    grid-template-rows: repeat(2,auto);
     float: left;
     cursor: pointer;
 }
 
-.mplus strong {
+#mPlusScore {
     border-bottom: 4px solid #acacac;
     font-size: 22px;
     color: #8738e8;
+    font-weight: bold;
+    text-align: center;
 }
 
 .mplus span {
@@ -154,9 +158,10 @@ figcaption span {
     cursor: pointer;
 }
 
-.raidprog strong {
+#raidProgg {
     border-bottom: 4px solid #acacac;
     font-size: 22px;
+    font-weight: bold;
     color: #e83897;
 }
 
