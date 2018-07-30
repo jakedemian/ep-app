@@ -20,10 +20,13 @@
             </nav>
         </div>
 
-        <div  class="animated fadeInDown slow input">
+        <div class="animated fadeInDown slow input">
             <input type="text"  id="characterNameInput" name="characterName" placeholder="Character Name">
+            
+            <input type="text" id="characterRealmInput" list="realmList" name="characterRealm" placeholder="Realm">
 
-            <input type="text" id="characterRealmInput" name="characterRealm" placeholder="Realm">
+            <datalist id="realmList">
+            </datalist>
 
             <button type="button" id="lookupCharacter"  onclick="lookupCharacter()">Search</button>
         </div>
@@ -47,6 +50,10 @@
                     <div id="raidProgg"></div>
                     <span>ANTBT</span>
                 </div>
+            </div>
+
+            <div id="errorMsg">
+
             </div>
         </main>
 
@@ -72,12 +79,58 @@
 			// Use $ here...
 		};
 		document.getElementsByTagName("head")[0].appendChild(script);
-	}
+    }
+
+    // REALM LIST HERE //
+
+    // Get the <datalist> and <input> elements.
+    var dataList = document.getElementById('realmList');
+    var input = document.getElementById('characterRealmInput');
+
+    // Create a new XMLHttpRequest.
+    var request = new XMLHttpRequest();
+
+    // Handle state changes for the request.
+    request.onreadystatechange = function(response) {
+    if (request.readyState === 4) {
+        if (request.status === 200) {
+         // Parse the JSON
+        var jsonOptions = JSON.parse(request.responseText);
+  
+        // Loop over the JSON array.
+        jsonOptions.forEach(function(item) {
+        // Create a new <option> element.
+        var option = document.createElement('option');
+        // Set the value using the item in the JSON array.
+        option.value = item;
+        // Add the <option> element to the <datalist>.
+        dataList.appendChild(option);
+      });
+      
+      // Update the placeholder text.
+      input.placeholder = "Realm";
+    } else {
+      // An error occured :(
+      input.placeholder = "Realm";
+        }
+        }
+    };
+
+    // Update the placeholder text.
+    input.placeholder = "Loading options...";
+
+    // Set up and make the request.
+    request.open('GET', '../wowusservers.json', true);
+    request.send();
+
+
+    // AUTO LOAD REALM LIST
 	
 	/**
 	* Create and kick off the api request.
 	*/
     function lookupCharacter() {
+        
 		// pull the data that the user entered in
         var charName = $("#characterNameInput").val();
         var charRealm = $("#characterRealmInput").val();
@@ -93,20 +146,37 @@
 			const json = await response.json();
 			window.processResponseData(json);
 		}
+
+        startLoadAnimation();
 		
 		// make the request!
 		request();
+
     }
-	
-	/**
+
+    // begin the loading animation
+    function startLoadAnimation() {
+        $("main").addClass( "loading", 1000, "easeInBack" );
+    };
+
+    function stopLoadAnimation() {
+        $("main").removeClass( "loading", 1000, "easeInBack" );
+    };
+
+    /**
 	* Process any response received by the api request
 	*/
 	function processResponseData(data){
+
+        stopLoadAnimation();
+
 		// if there's an error finding the character, we want to kick this to our error handling function
 		if(!!data.error){
 			processLookupError(data);
 			return;
-		}
+        }
+        
+        else {
 		
 		// otherwise, we populate everything with what the api gave us back
 		$("#charName").html(data.name);
@@ -117,6 +187,11 @@
 
         var classImgSrc = "../assets/img/" + data.class.replace(" ","_").toLowerCase() + ".png";
         $("#classicon").attr('src', classImgSrc);
+
+        $('#errorMsg').removeClass("errorMsg");    
+        $("#errorMsg").html("");
+
+        }
 	}
 	
 	/**
@@ -128,7 +203,12 @@
 		// this will mostly be when you look up a character that couldn't be found (wrong name or wrong realm)
 		console.error(errorData.statusCode + " " + errorData.error + ": " + errorData.message);
 		console.warn("TODO: make this display some message to the user besides just logging to console! They will need to see this error info.");
+        
+        $('#errorMsg').addClass("errorMsg"); 
+        $("#errorMsg").html(errorData.message);
+
 	}
+  
 
     </script>
     
