@@ -31,6 +31,8 @@
             <button type="button" id="lookupCharacter"  onclick="lookupCharacter()">Search</button>
         </div>
 
+        <div id="loading"></div>
+
         <main>
             <figure>
                 <img id="classicon" class="hvr-grow" src="../assets/img/icon.png">
@@ -156,11 +158,13 @@
 
     // begin the loading animation
     function startLoadAnimation() {
-        $("main").addClass( "loading", 1000, "easeInBack" );
+        $("#loading").addClass( "loading", 1000, "easeInBack" );
+        $("#loading").addClass('loadingbg');
     };
 
     function stopLoadAnimation() {
-        $("main").removeClass( "loading", 1000, "easeInBack" );
+        $("#loading").removeClass( "loading", 1000, "easeInBack" );
+        $("#loading").removeClass('loadingbg');
     };
 
     /**

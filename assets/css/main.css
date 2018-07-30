@@ -135,8 +135,32 @@ main {
     height: 108px;
 }
 
+#loading {
+    
+}
+
+
 .loading {
-    background: #333638;
+    border: 8px solid #e3e3e3;
+    border-radius: 50%;
+    border-top: 8px solid #3498db;
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: 120px;
+    left: 240px;
+    z-index: 3;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 main figure {
