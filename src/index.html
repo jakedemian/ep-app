@@ -6,6 +6,8 @@
         <link rel="stylesheet" href="../assets/css/main.css">
         <link rel="stylesheet" href="../assets/css/animate.css">
         <link rel="stylesheet" href="../assets/css/hover.css">
+        <link rel="stylesheet" href="../assets/css/classes.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     </head>
     <body>
 
@@ -44,13 +46,18 @@
 
             <div class="animated fadeIn slower stats">
                 <div class="hvr-float-shadow mplus">
+                    <a id="raiderPage">
                     <div id="mPlusScore"></div>
                     <span>M+ Score</span>
+                    <span id="raiderToolTip" class="tooltiptext"></span>
+                    </a>
                 </div>
 
-                <div class="hvr-float-shadow raidprog">
+                <div class="raidprog">
+                    <a id="progPage">
                     <div id="raidProgg"></div>
                     <span>ANTBT</span>
+                    </a>
                 </div>
             </div>
 
@@ -68,6 +75,17 @@
 
     
     <script>
+
+    // open links in external browser //    
+
+    const shell = require('electron').shell;
+
+    $(document).on('click', 'a[href^="http"]', function(event) {
+        event.preventDefault();
+        shell.openExternal(this.href);
+    });
+
+
 	/**
 	* Ugly, but this is the easiest way to import jQuery in electron.  TODO FIXME find a better way to get jquery loaded.
 	*/
@@ -144,7 +162,7 @@
 		
 		// create character lookup request
 		const request = async() => {
-			var response = await fetch('https://raider.io/api/v1/characters/profile?region=us&realm=' + charRealm + '&name=' + charName + '&fields=mythic_plus_scores%2Craid_progression');
+			var response = await fetch('https://raider.io/api/v1/characters/profile?region=us&realm=' + charRealm + '&name=' + charName + '&fields=mythic_plus_scores%2Craid_progression%2Cmythic_plus_best_runs');
 			const json = await response.json();
 			window.processResponseData(json);
 		}
@@ -152,7 +170,9 @@
         startLoadAnimation();
 		
 		// make the request!
-		request();
+        request();
+        
+        $("#charName").removeClass();
 
     }
 
@@ -187,6 +207,25 @@
 		$("#charRealm").html(data.realm);
         $("#mPlusScore").html(data.mythic_plus_scores.all.toFixed(0));
         $("#raidProgg").html(data.raid_progression["antorus-the-burning-throne"].summary.replace(" ",""));
+        $('#charName').addClass(data.class.replace(" ","-").toLowerCase() + "class");
+
+        var mPlusScore = data.mythic_plus_scores.all.toFixed(0);
+
+        if(!isNaN(mPlusScore)) {
+            if (mPlusScore > 0) {
+                $("#raiderPage").removeClass("hiddentooltip");
+                $("#raiderPage").addClass("tooltip");
+            }
+            else {
+                $("#raiderPage").removeClass("tooltip");
+                $("#raiderPage").addClass("hiddentooltip");
+            }
+        }
+        
+        $('#raiderToolTip').html("+" + data.mythic_plus_best_runs[0].mythic_level + " " + data.mythic_plus_best_runs[0].short_name);
+
+        var raiderLink = "https://raider.io/characters/us/" + data.realm + "/" + data.name;
+        $("#raiderPage").attr('href', raiderLink);
 
 
         var classImgSrc = "../assets/img/" + data.class.replace(" ","_").toLowerCase() + ".png";
@@ -195,8 +234,30 @@
         $('#errorMsg').removeClass("errorMsg");    
         $("#errorMsg").html("");
 
+        var scoreColor = '#1eff00';
+        if (!isNaN(mPlusScore)) {
+            if (mPlusScore <= 2000) {
+                scoreColor = '#1eff00';
+            }
+            if (mPlusScore >= 2000) {
+                scoreColor = '#0070dd';
+            }
+            if (mPlusScore >= 3000) {
+                scoreColor = '#a335ee';
+            }
+            if (mPlusScore >= 4000) {
+                scoreColor = '#ff8800';
+            }
+
+        $('#mPlusScore').css('color', scoreColor);
+
         }
-	}
+
+        
+
+        }
+    }
+    
 	
 	/**
 	* Process the response if we determined it was an error response.
