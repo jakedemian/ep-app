@@ -337,6 +337,24 @@ figcaption span {
     left: 20px;
 }
 
+#realmAlert {
+    cursor: default;
+    background: lightcoral;
+    color: #1f1f1f;
+    border-radius: 6px;
+    border: 1px solid red;
+    font-size: 14px;
+    padding: 10px;
+    z-index: 2;
+    position: absolute;
+    top: 170px;
+    left: 20px;
+}
+
+.viewRealmAlert {
+    visibility: hidden;
+}
+
 footer {
     background: #333638;
     padding: 5px;
