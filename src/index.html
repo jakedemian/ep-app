@@ -101,6 +101,10 @@
 			// Use $ here...
 		};
 		document.getElementsByTagName("head")[0].appendChild(script);
+		
+		// create the keyup events for our input fields to enable "enter to submit" functionality
+		$("#characterNameInput").on('keyup', function (e) {processEnterKeyPress(e);});
+		$("#characterRealmInput").on('keyup', function (e) {processEnterKeyPress(e);});
     }
 
     // REALM LIST HERE //
@@ -198,87 +202,83 @@
         
         else {
 		
-		// otherwise, we populate everything with what the api gave us back
-		$("#charName").html(data.name);
-		$("#charRealm").html(data.realm);
-        $("#mPlusScore").html(data.mythic_plus_scores.all.toFixed(0));
-        $("#raidProgg").html(data.raid_progression["antorus-the-burning-throne"].summary.replace(" ",""));
-        $('#charName').addClass(data.class.replace(" ","-").toLowerCase() + "class");
+			// otherwise, we populate everything with what the api gave us back
+			$("#charName").html(data.name);
+			$("#charRealm").html(data.realm);
+			$("#mPlusScore").html(data.mythic_plus_scores.all.toFixed(0));
+			$("#raidProgg").html(data.raid_progression["antorus-the-burning-throne"].summary.replace(" ",""));
+			$('#charName').addClass(data.class.replace(" ","-").toLowerCase() + "class");
 
-        var mPlusScore = data.mythic_plus_scores.all.toFixed(0);
+			var mPlusScore = data.mythic_plus_scores.all.toFixed(0);
 
-        if(!isNaN(mPlusScore)) {
-            if (mPlusScore > 0) {
-                $("#raiderPage").removeClass("hiddentooltip");
-                $("#raiderPage").addClass("tooltip");
-            }
-            else {
-                $("#raiderPage").removeClass("tooltip");
-                $("#raiderPage").addClass("hiddentooltip");
-            }
-        }
-        
-        $('#raiderToolTip').html("+" + data.mythic_plus_best_runs[0].mythic_level + " " + data.mythic_plus_best_runs[0].short_name);
+			if(!isNaN(mPlusScore)) {
+				if (mPlusScore > 0) {
+					$("#raiderPage").removeClass("hiddentooltip");
+					$("#raiderPage").addClass("tooltip");
+				}
+				else {
+					$("#raiderPage").removeClass("tooltip");
+					$("#raiderPage").addClass("hiddentooltip");
+				}
+			}
+			
+			$('#raiderToolTip').html("+" + data.mythic_plus_best_runs[0].mythic_level + " " + data.mythic_plus_best_runs[0].short_name);
 
-        var raiderLink = "https://raider.io/characters/us/" + data.realm + "/" + data.name;
-        $("#raiderPage").attr('href', raiderLink);
+			var raiderLink = "https://raider.io/characters/us/" + data.realm + "/" + data.name;
+			$("#raiderPage").attr('href', raiderLink);
 
-        var warLogsLink = "https://www.warcraftlogs.com/character/us/" + data.realm + "/" + data.name;
-        $("#logsLink").attr('href', warLogsLink);
-
-
-        var classImgSrc = "../assets/img/" + data.class.replace(" ","_").toLowerCase() + ".png";
-        $("#classicon").attr('src', classImgSrc);
-
-        $('#errorMsg').removeClass("errorMsg");    
-        $("#errorMsg").html("");
-
-        var dirtyRealms = [
-            "Ragnaros",
-            "Azralon"
-        ];
-
-        var insultNames = [
-            "degenerate",
-            "mong",
-            "mongoloid",
-            "retard",
-            "idiot",
-            "window licker"
-        ]
-
-        var realmName = data.realm;
-        if($.inArray(realmName, dirtyRealms) > -1){
-            var descriptionIndex = Number((Math.random() * (insultNames.length - 1)).toFixed(0));
-            $('#realmAlert').html("WARNING: This " + insultNames[descriptionIndex] + " is from " + realmName).removeClass("viewRealmAlert");
-        } else {
-            $("#realmAlert").html("");
-            $('#realmAlert').addClass("viewRealmAlert");
-        }
-            
+			var warLogsLink = "https://www.warcraftlogs.com/character/us/" + data.realm + "/" + data.name;
+			$("#logsLink").attr('href', warLogsLink);
 
 
-        var scoreColor = '#1eff00';
-        if (!isNaN(mPlusScore)) {
-            if (mPlusScore <= 2000) {
-                scoreColor = '#1eff00';
-            }
-            if (mPlusScore >= 2000) {
-                scoreColor = '#0070dd';
-            }
-            if (mPlusScore >= 3000) {
-                scoreColor = '#a335ee';
-            }
-            if (mPlusScore >= 4000) {
-                scoreColor = '#ff8800';
-            }
+			var classImgSrc = "../assets/img/" + data.class.replace(" ","_").toLowerCase() + ".png";
+			$("#classicon").attr('src', classImgSrc);
 
-        $('#mPlusScore').css('color', scoreColor);
+			$('#errorMsg').removeClass("errorMsg");    
+			$("#errorMsg").html("");
 
-        }
+			var dirtyRealms = [
+				"Ragnaros",
+				"Azralon"
+			];
 
-        
+			var insultNames = [
+				"degenerate",
+				"mong",
+				"mongoloid",
+				"retard",
+				"idiot",
+				"window licker"
+			]
 
+			var realmName = data.realm;
+			if($.inArray(realmName, dirtyRealms) > -1){
+				var descriptionIndex = Number((Math.random() * (insultNames.length - 1)).toFixed(0));
+				$('#realmAlert').html("WARNING: This " + insultNames[descriptionIndex] + " is from " + realmName).removeClass("viewRealmAlert");
+			} else {
+				$("#realmAlert").html("");
+				$('#realmAlert').addClass("viewRealmAlert");
+			}
+				
+
+
+			var scoreColor = '#1eff00';
+			if (!isNaN(mPlusScore)) {
+				if (mPlusScore <= 2000) {
+					scoreColor = '#1eff00';
+				}
+				if (mPlusScore >= 2000) {
+					scoreColor = '#0070dd';
+				}
+				if (mPlusScore >= 3000) {
+					scoreColor = '#a335ee';
+				}
+				if (mPlusScore >= 4000) {
+					scoreColor = '#ff8800';
+				}
+
+				$('#mPlusScore').css('color', scoreColor);
+			}
         }
     }
     
@@ -296,6 +296,15 @@
         $('#errorMsg').addClass("errorMsg"); 
         $("#errorMsg").html(errorData.message);
 
+	}
+	
+	/**
+	* Process enter key on the character input and realm name input fields.
+	*/
+	function processEnterKeyPress(e){
+		if (e.keyCode == 13) {
+			lookupCharacter();
+		}
 	}
   
 
