@@ -29,6 +29,7 @@ a {
     display: grid;
     grid-template-columns: 85% auto;
     background: #333638;
+    padding: 0;
     z-index: 2;
 }
 
@@ -60,6 +61,14 @@ nav img {
 
 nav img#min-btn {
     padding: 10px;
+}
+
+#min-btn:hover {
+    opacity: .3;
+}
+
+#close-btn:hover {
+    opacity: .3;
 }
 
 .input {
